@@ -12,6 +12,8 @@ from core.game_state import Action  # type: ignore
 class RandomPlay(PlanetWarsPlayer):
     def get_action(self, game_state):
         # Get all the idle planets that are owned by the random player
+        print("\n" * 100)
+        print(game_state)
         idle_planets = [p for p in game_state.planets if p.owner == self.player and p.transporter is None]
         if not idle_planets:  # If no idle planets, do nothing
             return Action.do_nothing()
