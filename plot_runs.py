@@ -76,6 +76,7 @@ def main():
 
     db_files = sorted(glob.glob(str(data_dir / "*.sqlite3")))
     for db_path in db_files:
+        print("Processing:", db_path)
         plot_run(db_path, plots_dir)
 
 if __name__ == "__main__":
