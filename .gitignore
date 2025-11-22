@@ -1,5 +1,6 @@
 planet-wars-rts
 .DS_Store
+.venv
 __pycache__
 *.pyc
 temp
