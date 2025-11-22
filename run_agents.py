@@ -25,9 +25,9 @@ def load_agent(class_path: str):
 def parse_args():
     """Argument parser for the program"""
     parser = argparse.ArgumentParser(description="Run Planet Wars matches between two agents.")
-    parser.add_argument("--agent1", type=str, default="random_play.RandomPlay", help="Agent 1 class (module.ClassName). Default: random_play.RandomPlay")
+    parser.add_argument("--agent1", type=str, default="sharp_agent.SharpAgent", help="Agent 1 class (module.ClassName). Default: sharp_agent.SharpAgent")
     parser.add_argument("--agent2", type=str, default="agents.greedy_heuristic_agent.GreedyHeuristicAgent", help="Agent 2 class (module.ClassName). Default: agents.greedy_heuristic_agent.GreedyHeuristicAgent")
-    parser.add_argument("--n-games", type=int, default=20, help="Number of games to run. Default: 20")
+    parser.add_argument("--n-games", type=int, default=100, help="Number of games to run. Default: 100")
     parser.add_argument("--num-planets", type=int, default=12, help="Number of planets in the map. Default: 12")
     return parser.parse_args()
 
@@ -37,7 +37,10 @@ def main():
 	# Load the agents from the given class paths
 	agent1 = load_agent(args.agent1)
 	agent2 = load_agent(args.agent2)
-
+ 
+	print("AGENT 1:", agent1.get_agent_type())
+	print("AGENT 2:", agent2.get_agent_type())
+	print("=" * 50)
 	# Configure the game parameters with the given number of planets
 	game_params = GameParams(num_planets=args.num_planets)
 	runner = GameRunner(agent1, agent2, game_params)
