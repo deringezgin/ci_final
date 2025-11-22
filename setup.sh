@@ -18,18 +18,17 @@ else
   git clone "$PLANET_WARS_REPO" "$REPO_DIR"
 fi
 
-cd "$REPO_DIR"
-echo "Applying patch '../$PATCH_FILE'..."
-git apply "../$PATCH_FILE"
-
-echo "Patch applied successfully."
-echo "\n"
-
 echo "Installing the Python dependencies..."
 pip install -r requirements.txt
 
 echo "Adding the Python bindings to PYTHONPATH" 
 export PYTHONPATH="${PYTHONPATH:-}:$(pwd)/planet-wars-rts/app/src/main/python"
 
+cd "$REPO_DIR"
+echo "Applying patch '../$PATCH_FILE'..."
+git apply "../$PATCH_FILE"
+
+echo "Patch applied successfully."
+echo "\n"
 echo "To run the Sharp Agent against the Greedy heuristic agent, run:"
 echo "'./gradlew :app:runGUI' inside the repository"
