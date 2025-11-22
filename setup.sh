@@ -27,8 +27,13 @@ export PYTHONPATH="${PYTHONPATH:-}:$(pwd)/planet-wars-rts/app/src/main/python"
 cd "$REPO_DIR"
 echo "Applying patch '../$PATCH_FILE'..."
 git apply "../$PATCH_FILE"
-
 echo "Patch applied successfully."
+
+echo "Building the App..."
+./gradlew :app:build -x test
+echo "App build done!"
+
 echo "\n"
+
 echo "To run the Sharp Agent against the Greedy heuristic agent, run:"
 echo "'./gradlew :app:runGUI' inside the repository"
