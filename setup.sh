@@ -24,5 +24,12 @@ git apply "../$PATCH_FILE"
 
 echo "Patch applied successfully."
 echo "\n"
+
+echo "Installing the Python dependencies..."
+pip install -r requirements.txt
+
+echo "Adding the Python bindings to PYTHONPATH" 
+export PYTHONPATH="${PYTHONPATH:-}:$(pwd)/planet-wars-rts/app/src/main/python"
+
 echo "To run the Sharp Agent against the Greedy heuristic agent, run:"
 echo "'./gradlew :app:runGUI' inside the repository"
