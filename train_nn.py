@@ -86,23 +86,16 @@ def build_planet_matrix(state: GameState, params: GameParams, me: Player) -> np.
 
     return M
 
-# Load config from the YAML file
-parser = argparse.ArgumentParser(description="Neural Evolver")
-parser.add_argument("--config", type=str, default="config1.yaml", help="Path to YAML config file")
-args = parser.parse_args()
-current_directory = os.path.dirname(__file__)
-CONFIG_PATH = args.config if os.path.isabs(args.config) else os.path.join(current_directory, args.config)
-with open(CONFIG_PATH, "r") as f:
-	cfg = yaml.safe_load(f)
-
-NUM_PLANETS = int(cfg["num_planets"])
-NUM_FEATURES = int(cfg["num_features"])
-HIDDEN_SIZES = list(cfg["hidden_sizes"])
-GAMES_PER_EVAL = int(cfg["games_per_eval"])
-GENS = int(cfg["gens"])
-SIGMA0 = float(cfg["sigma0"])
-OPPONENT = str(cfg["opponent"])
-WORKERS_PER_CORE = int(cfg["workers_per_core"])
+def load_config():
+    # Load config from the YAML file
+    parser = argparse.ArgumentParser(description="Neural Evolver")
+    parser.add_argument("--config", type=str, default="config1.yaml", help="Path to YAML config file")
+    args = parser.parse_args()
+    current_directory = os.path.dirname(__file__)
+    CONFIG_PATH = args.config if os.path.isabs(args.config) else os.path.join(current_directory, args.config)
+    with open(CONFIG_PATH, "r") as f:
+        cfg = yaml.safe_load(f)
+    return cfg
 
 class NeuralNetwork(nn.Module):
     """A neural network class for playing the Planet Wars game."""
@@ -258,4 +251,15 @@ def train():
     conn.close()
 
 if __name__ == "__main__":
+    cfg = load_config()
+    
+    NUM_PLANETS = int(cfg["num_planets"])
+    NUM_FEATURES = int(cfg["num_features"])
+    HIDDEN_SIZES = list(cfg["hidden_sizes"])
+    GAMES_PER_EVAL = int(cfg["games_per_eval"])
+    GENS = int(cfg["gens"])
+    SIGMA0 = float(cfg["sigma0"])
+    OPPONENT = str(cfg["opponent"])
+    WORKERS_PER_CORE = int(cfg["workers_per_core"])
+
     train()
