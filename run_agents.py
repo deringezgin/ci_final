@@ -25,8 +25,8 @@ def load_agent(class_path: str):
 def parse_args():
     """Argument parser for the program"""
     parser = argparse.ArgumentParser(description="Run Planet Wars matches between two agents.")
-    parser.add_argument("--agent1", type=str, default="agents.greedy_heuristic_agent.GreedyHeuristicAgent", help="Agent 1 class (module.ClassName). Default: agents.greedy_heuristic_agent.GreedyHeuristicAgent")
-    parser.add_argument("--agent2", type=str, default="random_play.RandomPlay", help="Agent 2 class (module.ClassName). Default: random_play.RandomPlay")
+    parser.add_argument("--agent1", type=str, default="random_play.RandomPlay", help="Agent 1 class (module.ClassName). Default: random_play.RandomPlay")
+    parser.add_argument("--agent2", type=str, default="agents.greedy_heuristic_agent.GreedyHeuristicAgent", help="Agent 2 class (module.ClassName). Default: agents.greedy_heuristic_agent.GreedyHeuristicAgent")
     parser.add_argument("--n-games", type=int, default=20, help="Number of games to run. Default: 20")
     parser.add_argument("--num-planets", type=int, default=12, help="Number of planets in the map. Default: 12")
     return parser.parse_args()
