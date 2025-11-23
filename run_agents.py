@@ -51,7 +51,16 @@ def main():
 		final_model = runner.run_game()
 		winner = final_model.get_leader()
 		scores[winner] += 1
-		print(f"Game {i+1}/{args.n_games} winner: {winner}")
+
+		planets = final_model.state.planets
+		p1_planets = sum(1 for p in planets if p.owner == Player.Player1)
+		p2_planets = sum(1 for p in planets if p.owner == Player.Player2)
+		neutral_planets = sum(1 for p in planets if p.owner == Player.Neutral)
+
+		p1_ships = final_model.get_ships(Player.Player1)
+		p2_ships = final_model.get_ships(Player.Player2)
+
+		print(f"Game {i+1}/{args.n_games} winner: {winner} (P1 planets: {p1_planets}, P2 planets: {p2_planets}, Neutral: {neutral_planets}, P1 ships: {p1_ships:.1f}, P2 ships: {p2_ships:.1f})")
 
 	# Print the results of the games
 	print("=" * 50)
