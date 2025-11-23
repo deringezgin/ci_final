@@ -46,7 +46,7 @@ If the display forwarding is not supported in your device, you can run our agent
 To train a neural network agent, run the `train_nn.py` script. It is possible to specify a `.yaml` file with the `--config` flag. The default config is in `config1.yaml`.
 
 ```bash
-python train_nn.py --config config1.yaml
+python3 train_nn.py --config config1.yaml
 ```
 
 The training script will scrape through the config file, evolve the network weights via CMA-ES and save the training progress (solution and fitness for each individual) and the used config into a timestamped SQLite database in the `data/` folder.
@@ -56,7 +56,7 @@ The training script will scrape through the config file, evolve the network weig
 To run the trained agent, first extract a solution from the training databases into a `.npy` file using `extract_agent.py` script:
 
 ```bash
-python extract_agent.py
+python3 extract_agent.py
 ```
 
 By default this script scans all `.sqlite3` databases in the `data/` folder, picks the best individual, and writes it to `sharp_agent_weights.npy` file. It is possible to specify a specific database, generation, individual, and output file via the `--db`, `--generation`, `--individual`, and `--outfile` flags.
