@@ -39,7 +39,13 @@ If the display forwarding is not supported in your device, you can run our agent
 
 ## Training an Agent
 
-To train our neural network agent, 
+To train a neural network agent, run the `train_nn.py` script. It is possible to specify a `.yaml` file with the `--config` flag. The default config is in `config1.yaml`.
+
+```bash
+python train_nn.py --config config1.yaml
+```
+
+The training script will scrape through the config file, evolve the network weights via CMA-ES and save the training progress (solution and fitness for each individual) and the used config into a timestamped SQLite database in the `data/` folder.
 
 ## Running the Trained Agent
 
