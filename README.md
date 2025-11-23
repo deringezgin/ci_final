@@ -83,4 +83,12 @@ This runs the `run_agents.py` script to play a set of games between our trained 
 
 ## Running Baseline Benchmarks
 
+We also include a simple benchmarking script to compare the baseline agents. To run a benchmark and save the game results into a CSV file in the `benchmarks/` folder, use the `benchmarks/run_benchmark.py` script.
+
+```bash
+python3 benchmarks/run_benchmark.py --agent1 pure --agent2 greedy --n-games 100000
+```
+
+The script will run the requested number of games and write per‑game information (winner, planet counts, ship counts) to a .csv file. You can get a simple analysis of these outputs via the `benchmarks/analyze_benchmark.py` script. 
+
 ## Visualizing Results
