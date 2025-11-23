@@ -8,6 +8,7 @@ This repository includes our code for the final project of COM407: Computational
 ### Without Docker
 
 Requirements: Python 3.10+, Java JDK 21, Git, Bash
+
 ```bash
 git clone https://github.com/deringezgin/COM407-FinalProject
 cd ci_final
@@ -17,6 +18,7 @@ cd ci_final
 The setup script will create a Python virtual environment, clone the [Planet Wars source code](https://github.com/SimonLucas/planet-wars-rts), apply our patch for the GUI support, install the Python dependencies and build the Planet Wars app. 
 
 If you already have your own virtual environment or wish not to have one, you can run the setup script with the `noenv` flag. 
+
 ```bash
 ./setup.sh noenv
 ```
@@ -24,6 +26,7 @@ If you already have your own virtual environment or wish not to have one, you ca
 ### With Docker
 
 You can also run our project in a Docker container.
+
 ```bash
 git clone https://github.com/deringezgin/COM407-FinalProject
 cd ci_final
@@ -31,6 +34,7 @@ docker build -t planet-wars-ci .
 ```
 
 To run it with a GUI, start the container with display forwarding.
+
 ```bash
 docker run -it -e DISPLAY=host.docker.internal:0 planet-wars-ci /bin/bash
 ```
@@ -49,9 +53,33 @@ The training script will scrape through the config file, evolve the network weig
 
 ## Running the Trained Agent
 
+To run the trained agent, first extract a solution from the training databases into a `.npy` file using `extract_agent.py` script:
+
+```bash
+python extract_agent.py
+```
+
+By default this script scans all `.sqlite3` databases in the `data/` folder, picks the best individual, and writes it to `sharp_agent_weights.npy` file. It is possible to specify a specific database, generation, individual, and output file via the `--db`, `--generation`, `--individual`, and `--outfile` flags.
+
 ### Running with GUI
 
+After extracting the agent, simply run the `./run_sharp_agent.sh` script:
+
+```bash
+./run_sharp_agent.sh
+```
+
+This script will add the Planet Wars Python bindings to `PYTHONPATH`, acivate the `.venv` if it exists, restart the Python game server and run our trained agent against the greedy heuristic agent. 
+
 ### Running without a GUI
+
+To evaluate the trained agent in headless mode, run the same script with the `headless` flag
+
+```bash
+./run_sharp_agent.sh headless
+```
+
+This runs the `run_agents.py` script to play a set of games between our trained agent against the greedy heuristic agent.
 
 ## Running Baseline Benchmarks
 
