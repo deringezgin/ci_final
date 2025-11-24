@@ -1,7 +1,7 @@
 num_planets: 12
 num_features: 11
 hidden_sizes: [32, 16, 8]
-games_per_eval: 10
+games_per_eval: 100
 gens: 500
 sigma0: 0.5
 opponent: agents.greedy_heuristic_agent.GreedyHeuristicAgent
