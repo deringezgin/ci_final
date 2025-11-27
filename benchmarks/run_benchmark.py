@@ -4,6 +4,7 @@ import csv
 import os
 import time
 from datetime import datetime
+from concurrent.futures import ProcessPoolExecutor
 
 # Ensure Planet Wars Python bindings are on the path
 PW_PYTHON_PATH = "planet-wars-rts/app/src/main/python"
@@ -29,29 +30,50 @@ def parse_args():
     parser.add_argument("--num-planets", type=int, default=12, help="Number of planets in the map (default: 12)")
     return parser.parse_args()
 
+def make_agent(kind: str):
+    if kind == "pure":
+        return PureRandomAgent()
+    if kind == "careful":
+        return CarefulRandomAgent()
+    if kind == "greedy":
+        return GreedyHeuristicAgent()
+    if kind == "sharp":
+        return SharpAgent()
+    raise ValueError(f"Unknown agent type: {kind}")
+
+
+def run_single_game(job):
+    """Run a single game and return the CSV row data."""
+    game_index, agent1_kind, agent2_kind, num_planets = job
+
+    agent1 = make_agent(agent1_kind)
+    agent2 = make_agent(agent2_kind)
+    game_params = GameParams(num_planets=num_planets)
+    runner = GameRunner(agent1, agent2, game_params)
+
+    final_model = runner.run_game()
+    winner = final_model.get_leader()
+
+    planets = final_model.state.planets
+    p1_planets = sum(1 for p in planets if p.owner == Player.Player1)
+    p2_planets = sum(1 for p in planets if p.owner == Player.Player2)
+    neutral_planets = sum(1 for p in planets if p.owner == Player.Neutral)
+
+    p1_ships = final_model.get_ships(Player.Player1)
+    p2_ships = final_model.get_ships(Player.Player2)
+
+    return [game_index, str(winner), p1_planets, p2_planets, neutral_planets, p1_ships, p2_ships]
+
 def main():
     args = parse_args()
 
-    def make_agent(kind):
-        if kind == "pure":
-            return PureRandomAgent()
-        if kind == "careful":
-            return CarefulRandomAgent()
-        if kind == "greedy":
-            return GreedyHeuristicAgent()
-        if kind == "sharp":
-            return SharpAgent()
-        raise ValueError(f"Unknown agent type: {kind}")
+    # Fixed number of worker processes
+    n_workers = max(1, min(12, args.n_games))
 
-    agent1 = make_agent(args.agent1)
-    agent2 = make_agent(args.agent2)
-
-    print(f"Benchmark: {agent1.get_agent_type()} vs {agent2.get_agent_type()}")
+    print(f"Benchmark: {args.agent1} vs {args.agent2}")
     print(f"Games: {args.n_games}, Num planets: {args.num_planets}")
+    print(f"Using {n_workers} worker processes")
     print("=" * 50)
-
-    game_params = GameParams(num_planets=args.num_planets)
-    runner = GameRunner(agent1, agent2, game_params)
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     outfile = f"{timestamp}_{args.agent1}_v_{args.agent2}_benchmark.csv"
@@ -64,22 +86,12 @@ def main():
         writer = csv.writer(f)
         writer.writerow(["game", "winner", "p1_planets", "p2_planets", "neutral_planets", "p1_ships", "p2_ships"])
 
-        for i in range(1, args.n_games + 1):
-            final_model = runner.run_game()
-            winner = final_model.get_leader()
+        jobs = ((i, args.agent1, args.agent2, args.num_planets) for i in range(1, args.n_games + 1))
 
-            planets = final_model.state.planets
-            p1_planets = sum(1 for p in planets if p.owner == Player.Player1)
-            p2_planets = sum(1 for p in planets if p.owner == Player.Player2)
-            neutral_planets = sum(1 for p in planets if p.owner == Player.Neutral)
-
-            p1_ships = final_model.get_ships(Player.Player1)
-            p2_ships = final_model.get_ships(Player.Player2)
-
-            writer.writerow([i, str(winner), p1_planets, p2_planets, neutral_planets, p1_ships, p2_ships])
-            print(f"Game {i}/{args.n_games} winner: {winner} (P1 planets: {p1_planets}, "
-                  f"P2 planets: {p2_planets}, Neutral: {neutral_planets}, "
-                  f"P1 ships: {p1_ships:.1f}, P2 ships: {p2_ships:.1f})")
+        with ProcessPoolExecutor(max_workers=n_workers) as executor:
+            for completed, row in enumerate(executor.map(run_single_game, jobs), start=1):
+                writer.writerow(row)
+                print(f"Completed {completed}/{args.n_games} games")
 
     time_diff = time.time() - start_time
 
